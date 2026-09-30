@@ -1,105 +1,62 @@
 # Functional Safety MCU/SoC Case Study
 
-> An independent engineering case study exploring how Functional Safety analysis can be applied at MCU/SoC and IP level.
+An independent case study on how Functional Safety analysis changes when you move from the ECU down into the MCU/SoC itself.
 
-**Status: v0.1 — Work in Progress**
+**Status: v0.1, work in progress**
 
-## Overview
+## Why this project
 
-Functional Safety analysis at system or ECU level eventually depends on the behaviour of the semiconductor devices implementing the safety-related functions.
+Safety analysis at system or ECU level eventually depends on how the semiconductor behaves. I work with that boundary from the integration side, and I wanted to understand the other side of it: how functions are allocated to IP blocks, how those blocks can fail, how failures spread through the SoC, and how safety requirements and mechanisms follow from that.
 
-This project explores that next level of abstraction.
+This is not a production MCU design. It is an exercise in documenting the reasoning chain from a system-level safety need down to semiconductor-level Functional Safety.
 
-The case study starts with a conceptual MCU/SoC used for a safety-related motor-control function and progressively examines what happens inside the semiconductor: how functions are allocated to IP blocks, how those blocks can fail, how failures can propagate through the SoC, and how safety requirements and safety mechanisms can be derived from that analysis.
+## Reference application
 
-The intention is not to design a production MCU. The project is an engineering exercise in building and documenting the reasoning chain from a system-level safety need down into semiconductor-level Functional Safety.
-
-## Case Study
-
-A humanoid joint controller is used as the reference application.
-
-The application provides a concrete boundary:
+A humanoid joint controller:
 
 **robot-level control → joint control unit → MCU/SoC → power stage → motor/joint**
 
-The detailed robot safety concept is outside the scope of this repository. The focus begins at the boundary of the MCU/SoC and moves inward.
+The robot-level safety concept is out of scope. The analysis starts at the MCU/SoC boundary and moves inward, from basic needs such as sensing, control calculation, data storage, timing and output generation.
 
-The conceptual MCU/SoC is developed from basic functional needs such as acquiring sensor information, executing control calculations, storing data, maintaining timing and generating control outputs.
+## Method
 
-From there, the analysis asks questions such as:
+I develop the analysis step by step. Safety mechanisms are not assumed at the start; they are added only when the failure analysis justifies them.
 
-- What functions must the MCU/SoC perform correctly?
-- How can an individual IP block fail?
-- Can correct information become corrupted while moving between IP blocks?
-- How can an internal failure propagate to an externally visible MCU failure?
-- Which failures require safety mechanisms?
-- Can supposedly independent safety mechanisms share a common dependency?
-- How can the resulting safety requirements and mechanisms be verified?
-
-## Engineering Method
-
-The project is developed incrementally rather than starting with a predefined list of safety mechanisms.
-
-```text id="eqg1if"
+```text
 Application and MCU boundary
-            ↓
-Functional decomposition
-            ↓
-Conceptual IP/SoC architecture
-            ↓
-Functional failures and failure propagation
-            ↓
-Semiconductor safety requirements
-            ↓
-Safety mechanisms
-            ↓
-FTA / FMEDA
-            ↓
-Dependent Failure Analysis
-            ↓
-Fault reactions
-            ↓
-Verification
-            ↓
-Traceability
+  → Functional decomposition
+  → Conceptual IP/SoC architecture
+  → Functional failures and failure propagation
+  → Semiconductor safety requirements
+  → Safety mechanisms
+  → FTA / FMEDA
+  → Dependent failure analysis
+  → Fault reactions
+  → Verification and traceability
 ```
 
-For example, the analysis distinguishes between a memory element storing incorrect information and correct information becoming corrupted while travelling through the SoC interconnect. These may lead to similar system-level effects but originate from different parts of the semiconductor architecture and therefore require different failure analysis.
+One example of the reasoning: a memory element storing wrong data and correct data being corrupted in the interconnect can look identical at system level, but they start in different parts of the architecture and need different analysis.
 
-Safety mechanisms such as redundancy, monitoring or data-integrity protection are not assumed at the start. They are introduced only when supported by the preceding failure analysis.
+## Work products
 
-## Work Products
-
-### v0.1 — Architecture and Initial Failure Reasoning
-
+**v0.1: architecture and initial failure reasoning**
 [`docs/01_conceptual_architecture.md`](docs/01_conceptual_architecture.md)
 
-The first work product establishes:
+- system-to-semiconductor boundary
+- initial conceptual MCU/SoC architecture and IP blocks
+- initial MCU and IP-level failure behaviours
+- first failure-propagation reasoning, including interconnect failures
 
-- the system-to-semiconductor boundary;
-- the initial conceptual MCU/SoC architecture;
-- the purpose of the initial IP blocks;
-- initial MCU and IP-level failure behaviours; and
-- initial failure-propagation reasoning, including interconnect failures.
+Later documents will be added as the analysis progresses. I do not create empty FTA, FMEDA, DFA or verification files in advance.
 
-Later work products will be added as the analysis progresses. Empty FTA, FMEDA, DFA or verification documents are intentionally not created in advance.
+## Status
 
-## Project Status
+The project is at the architecture and qualitative failure-analysis stage. Next: formalise the functional decomposition and trace selected IP-level failures to MCU-boundary effects, which will be the basis for deriving safety requirements.
 
-The project is currently at the **architecture and qualitative failure-analysis stage**.
+Quantitative FMEDA, diagnostic coverage, SPFM/LFM, detailed dependent failure analysis and verification evidence are **not yet developed**.
 
-The next engineering activities are to formalize the MCU/IP functional decomposition and trace selected IP-level failures through the SoC to MCU-boundary effects. These results will provide the basis for deriving semiconductor safety requirements.
+## Project basis
 
-Quantitative FMEDA, diagnostic coverage, SPFM/LFM, detailed dependent failure analysis and verification evidence have **not yet been developed**.
+This is an independent learning project. The architecture is conceptual, built from general semiconductor concepts and public information. It does not represent a specific commercial product or any architecture from my professional work.
 
-## Project Basis
-
-This is an independent research and learning project.
-
-The MCU/SoC architecture is conceptual and is based on general semiconductor architecture concepts and public technical information. It does not represent the internal architecture of a specific commercial semiconductor product and does not represent semiconductor architecture from previous professional work.
-
-AI tools are used as learning and review aids to explain concepts, challenge engineering reasoning and support documentation. Engineering decisions, assumptions and analyses are developed explicitly as part of the case study.
-
-Where external technical sources are used, they will be identified. Unknown information is marked **TBD** or documented as a project assumption.
-
-No semiconductor failure rates, diagnostic coverage values, SPFM/LFM results or hardware capabilities are invented for the case study.
+I use AI tools as learning and review aids to explain concepts and challenge my reasoning. Decisions, assumptions and analyses are my own. Unknown information is marked **TBD** or listed as an assumption, and no failure rates, diagnostic coverage values or metrics are invented.
