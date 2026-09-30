@@ -1,56 +1,55 @@
-# MCU-SoC-Functional-Safety-Case-Study
-Independent case study exploring functional safety engineering at MCU/SoC and IP level.
-Functional Safety MCU/SoC Case Study
+# Functional Safety MCU/SoC Case Study
 
-Status: v0.1 — Work in Progress
+> An independent engineering case study exploring how Functional Safety analysis can be applied at MCU/SoC and IP level.
 
-Purpose
+**Status: v0.1 — Work in Progress**
 
-This repository is an independent learning and research case study focused on extending Functional Safety engineering into the semiconductor domain.
+## Overview
 
-The project develops a conceptual safety-related MCU/SoC case study with emphasis on:
+Functional Safety analysis at system or ECU level eventually depends on the behaviour of the semiconductor devices implementing the safety-related functions.
 
-MCU/MPU and IP/SoC architecture
+This project explores that next level of abstraction.
 
-semiconductor-level failure modes and failure propagation
+The case study starts with a conceptual MCU/SoC used for a safety-related motor-control function and progressively examines what happens inside the semiconductor: how functions are allocated to IP blocks, how those blocks can fail, how failures can propagate through the SoC, and how safety requirements and safety mechanisms can be derived from that analysis.
 
-safety requirements
+The intention is not to design a production MCU. The project is an engineering exercise in building and documenting the reasoning chain from a system-level safety need down into semiconductor-level Functional Safety.
 
-safety mechanisms
+## Case Study
 
-FTA and FMEDA
+A humanoid joint controller is used as the reference application.
 
-dependent failure analysis
+The application provides a concrete boundary:
 
-safety verification
+**robot-level control → joint control unit → MCU/SoC → power stage → motor/joint**
 
-traceability between requirements, architecture, failures, safety mechanisms and verification
+The detailed robot safety concept is outside the scope of this repository. The focus begins at the boundary of the MCU/SoC and moves inward.
 
-A safety-related motor-control application is used as a reference context to establish a system-to-semiconductor boundary. The application itself is not the primary subject of the project.
+The conceptual MCU/SoC is developed from basic functional needs such as acquiring sensor information, executing control calculations, storing data, maintaining timing and generating control outputs.
 
-Project Basis and Disclaimer
+From there, the analysis asks questions such as:
 
-This is an independent research and learning project. It does not represent work performed for an employer, customer, semiconductor manufacturer, or commercial product.
+- What functions must the MCU/SoC perform correctly?
+- How can an individual IP block fail?
+- Can correct information become corrupted while moving between IP blocks?
+- How can an internal failure propagate to an externally visible MCU failure?
+- Which failures require safety mechanisms?
+- Can supposedly independent safety mechanisms share a common dependency?
+- How can the resulting safety requirements and mechanisms be verified?
 
-The architectures and analyses developed in this repository are conceptual project assumptions based on general semiconductor engineering concepts and public technical information. They are not intended to reproduce or represent the internal architecture of any specific MCU/SoC or semiconductor product, and they do not represent semiconductor architecture from previous professional work.
+## Engineering Method
 
-AI tools are used as learning and review aids to support concept explanation, challenge engineering reasoning, identify topics requiring further investigation, and assist with documentation.
+The project is developed incrementally rather than starting with a predefined list of safety mechanisms.
 
-Engineering assumptions and decisions are developed explicitly within the case study. Where public semiconductor documentation, standards, textbooks, papers or other technical references are used, those sources will be identified.
-
-No diagnostic coverage, semiconductor failure rates, SPFM/LFM values, hardware capabilities, or other quantitative safety claims are assumed without an explicit engineering basis. Unknown information is identified as TBD or documented as a project assumption.
-
-Engineering Approach
-
-The case study is being developed incrementally through the following engineering chain:
-
-System / semiconductor boundary
+```text id="eqg1if"
+Application and MCU boundary
             ↓
-Safety requirements
+Functional decomposition
             ↓
-MCU/SoC and IP architecture
+Conceptual IP/SoC architecture
             ↓
-Failure modes and failure propagation
+Functional failures and failure propagation
+            ↓
+Semiconductor safety requirements
             ↓
 Safety mechanisms
             ↓
@@ -60,22 +59,9 @@ Dependent Failure Analysis
             ↓
 Fault reactions
             ↓
-Verification strategy
+Verification
             ↓
 Traceability
+```
 
-Safety mechanisms are intentionally not selected before the relevant architecture, failure modes and safety requirements have been established.
-
-Work Products
-
-v0.1
-
-01_conceptual_architecture.md — reference application boundary, initial conceptual MCU/SoC architecture, architecture-element IDs, and initial qualitative failure-propagation reasoning.
-
-Additional work products will be added as the engineering analysis develops rather than creating empty documents in advance.
-
-Current Status
-
-v0.1 establishes the initial system-to-semiconductor boundary and conceptual MCU/SoC architecture and begins qualitative IP/SoC failure-propagation analysis.
-
-The project does not currently claim a completed safety concept, quantitative FMEDA, completed DFA, semiconductor safety metrics, production-ready architecture, compliance, or certification.
+For example, the analysis distinguishes between a memory element storing incorrect information and correct
