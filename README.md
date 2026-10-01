@@ -43,6 +43,8 @@ The case study is developed through the following engineering work products:
 3. [Semiconductor Safety Requirements](safety-requirements/semiconductor_safety_requirements.md)
 4. [Safety Architecture and Mechanism Allocation](safety-architecture/safety_mechanism_allocation.md)
 5. [Qualitative Fault Tree Analysis](fta/fault_tree_analysis.md)
+6. [FMEDA Framework](fmeda/fmeda_framework.md)
+7. [Dependent Failure Analysis](dfa/dependent_failure_analysis.md)
 
 ## Current Development
 
