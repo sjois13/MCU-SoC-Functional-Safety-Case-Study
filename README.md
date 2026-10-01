@@ -38,17 +38,13 @@ Verification and traceability
 
 ### v0.1 — Conceptual MCU/SoC Architecture
 
-[Conceptual MCU/SoC Architecture](architecture/conceptual_architecture.md)
+## Work Products
 
-Establishes the initial:
-
-- system-to-semiconductor boundary;
-- conceptual MCU/SoC architecture;
-- MCU and IP responsibilities;
-- MCU boundary failure behaviours; and
-- preliminary IP/SoC failure candidates.
-
-The architecture is intentionally conceptual. Detailed safety mechanisms have not yet been allocated.
+1. [Conceptual MCU/SoC Architecture](architecture/conceptual_architecture.md)
+2. [Functional Failure Analysis](failure-analysis/functional_failure_analysis.md)
+3. [Semiconductor Safety Requirements](safety-requirements/semiconductor_safety_requirements.md)
+4. [Safety Architecture and Mechanism Allocation](safety-architecture/safety_mechanism_allocation.md)
+5. [Qualitative Fault Tree Analysis](fta/fault_tree_analysis.md)
 
 ## Current Development
 
