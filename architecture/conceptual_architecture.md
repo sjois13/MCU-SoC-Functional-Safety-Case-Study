@@ -6,6 +6,10 @@ This document establishes the initial architecture and failure-analysis basis fo
 
 ## 1. Boundary and Assumptions
 
+![System boundary](diagrams/system_boundary.png)
+
+*Figure 1 — System context and boundary of the conceptual MCU/SoC within the Joint Control Unit.*
+
 The conceptual MCU/SoC is the primary controller of one humanoid Joint Control Unit (JCU).
 
 ```text id="09t6p5"
@@ -35,6 +39,12 @@ The MCU/SoC shall functionally:
 Control-law design is outside scope.
 
 ## 3. Conceptual Architecture
+
+![Conceptual MCU/SoC architecture](diagrams/conceptual_soc_architecture.png)
+
+*Figure 2 — Initial conceptual MCU/SoC architecture and principal information paths.*
+
+`ARCH-CLK-001`, `ARCH-RST-001` and `ARCH-PWR-001` are not shown in this information-flow view. Their relationships to the other SoC elements remain TBD.
 
 | ID | Element | Role |
 |---|---|---|
