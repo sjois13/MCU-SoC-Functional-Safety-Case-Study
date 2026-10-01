@@ -38,33 +38,18 @@ Mission-profile and technology assumptions are also not yet defined.
 
 Until these inputs have a justified basis, failure rates, diagnostic coverage, SPFM, LFM and PMHF will not be calculated.
 
-## 4. Failure Classification Concept
+## 4. Failure Classification
 
-For a safety-related hardware element, the analysis would determine how its failure contribution is classified after considering the implemented safety mechanisms.
+The eventual FMEDA will classify hardware failure contributions according to their safety effect and the effectiveness of the associated safety mechanisms.
 
-Conceptually:
+The analysis will distinguish, as applicable:
 
-```text
-Hardware failure
-       ↓
-Does it violate a safety requirement?
-       │
-   ┌───┴───┐
-   │       │
-  No      Yes
-           ↓
-     Is it detected /
-     controlled by the
-     safety mechanism?
-           │
-      ┌────┴────┐
-      ↓         ↓
-   covered    not covered
-      ↓         ↓
- diagnostic   residual /
- contribution other safety-
-              relevant contribution
-```
+- safe faults;
+- single-point faults;
+- residual faults; and
+- multiple-point faults, including latent contributions.
+
+The classification and resulting contribution to hardware safety metrics remain TBD until the architecture, failure modes and safety-mechanism coverage are sufficiently defined.
 
 ## 5. Diagnostic Coverage
 
@@ -90,15 +75,11 @@ The same principle applies to CPU monitoring, ADC monitoring, interconnect prote
 
 ## 6. Open Items
 
-- semiconductor failure-rate source;
-- failure-mode distributions;
-- complete hardware-element decomposition;
-- diagnostic coverage justification;
-- residual failure classification;
-- latent multiple-point failure classification;
-- mission/profile assumptions;
-- SPFM calculation;
-- LFM calculation; and
-- PMHF evaluation where applicable.
+- extend the FMEDA to the remaining hardware elements;
+- refine hardware failure modes below the current functional-failure level;
+- establish the relationship between physical failure modes and functional effects;
+- refine failure classification;
+- evaluate latent multiple-point faults; and
+- calculate hardware safety metrics only when justified quantitative inputs are available.
 
-Once these inputs are available, this work product can be a quantitave FMEDA framework rather than the existing qualitative FMEDA.
+Once justified quantitative inputs are available, this framework can be extended into a quantitative FMEDA.
