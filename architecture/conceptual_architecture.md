@@ -6,17 +6,11 @@ This document establishes the initial architecture and failure-analysis basis fo
 
 ## 1. Boundary and Assumptions
 
+The conceptual MCU/SoC is the primary controller of one humanoid Joint Control Unit (JCU).
+
 ![System boundary](diagrams/system_boundary.png)
 
 *Figure 1 — System context and boundary of the conceptual MCU/SoC within the Joint Control Unit.*
-
-The conceptual MCU/SoC is the primary controller of one humanoid Joint Control Unit (JCU).
-
-```text id="09t6p5"
-Robot controller → JCU → MCU/SoC → external power stage → motor → joint
-                             ↑                              |
-                             └────────── feedback ──────────┘
-```
 
 Robot-level environment interpretation and hazard analysis remain outside the case-study boundary.
 
