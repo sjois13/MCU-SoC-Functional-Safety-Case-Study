@@ -22,7 +22,7 @@ Robot-level environment interpretation and hazard analysis remain outside the ca
 
 ## 2. MCU Functions
 
-The MCU/SoC shall functionally:
+At the current level of abstraction, the MCU/SoC performs the following functions:
 
 - receive motion requests and constraints;
 - acquire joint/motor feedback;
@@ -33,12 +33,6 @@ The MCU/SoC shall functionally:
 Control-law design is outside scope.
 
 ## 3. Conceptual Architecture
-
-![Conceptual MCU/SoC architecture](diagrams/conceptual_soc_architecture.png)
-
-*Figure 2 — Initial conceptual MCU/SoC architecture and principal information paths.*
-
-`ARCH-CLK-001`, `ARCH-RST-001` and `ARCH-PWR-001` are not shown in this information-flow view. Their relationships to the other SoC elements remain TBD.
 
 | ID | Element | Role |
 |---|---|---|
@@ -54,18 +48,11 @@ Control-law design is outside scope.
 | ARCH-PWR-001 | Power-related function | SoC supply/conditioning/distribution; boundary TBD |
 | ARCH-OUT-001 | Output peripheral | Interface toward external power stage |
 
-```text id="98crmx"
-Robot controller → COM ─────────────────────┐
-                                           ▼
-External feedback → ADC / TMR ───────────→ INT ↔ CPU ↔ SRAM
-                                           │      ↑
-                                           │      │
-                                           │     NVM
-                                           ▼
-                                          OUT → power stage → motor/joint
-```
+![Conceptual MCU/SoC architecture](diagrams/conceptual_soc_architecture.png)
 
-Clock, reset and power relationships are not shown and remain to be refined.
+*Figure 2 — Initial conceptual MCU/SoC architecture and principal information paths.*
+
+`ARCH-CLK-001`, `ARCH-RST-001` and `ARCH-PWR-001` are not shown in this information-flow view. Their relationships to the other SoC elements remain TBD.
 
 Watchdog, DMA, debug and security functions are outside v0.1.
 
