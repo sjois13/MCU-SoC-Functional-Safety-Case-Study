@@ -70,17 +70,17 @@ Watchdog, DMA, debug and security functions are outside v0.1.
 
 The list is preliminary and not claimed to be exhaustive.
 
-## 5. Initial IP/SoC Failure Candidates
+## 5. Initial IP/SoC Functional Failure Candidates
 
 | ID | Element | Candidate failure | Potential boundary effect |
 |---|---|---|---|
-| FM-CLK-001 | Clock | Incorrect clock behaviour | FB-002; others TBD |
-| FM-CPU-001 | CPU | Incorrect computation | FB-001 |
-| FM-SRAM-001 | SRAM | Incorrect stored working data | FB-001 / FB-005 |
-| FM-INT-001 | Interconnect | Incorrect transaction transfer | FB-001 / FB-002 / FB-003 / FB-005 |
-| FM-RST-001 | Reset | Failure to establish intended defined state | TBD |
+| FF-CLK-001 | Clock | Incorrect clock behaviour | FB-002; others TBD |
+| FF-CPU-001 | CPU | Incorrect computation | FB-001 |
+| FF-SRAM-001 | SRAM | Incorrect stored working data | FB-001 / FB-005 |
+| FF-INT-001 | Interconnect | Incorrect transaction transfer | FB-001 / FB-002 / FB-003 / FB-005 |
+| FF-RST-001 | Reset | Failure to establish intended defined state | TBD |
 
-For `FM-INT-001`, candidate transfer failures currently include **data corruption, loss, incorrect timing, wrong destination, unintended additional delivery, duplication, incorrect ordering and unintended source**.
+For `FF-INT-001`, candidate transfer failures currently include **data corruption, loss, incorrect timing, wrong destination, unintended additional delivery, duplication, incorrect ordering and unintended source**.
 
 A storage failure is distinguished from a transfer-path failure: correct information in SRAM that becomes incorrect during transfer is not automatically classified as an SRAM failure.
 
