@@ -36,7 +36,7 @@ Verification and traceability
 
 ## Work Products
 
-### v0.1 — Conceptual MCU/SoC Architecture
+The case study is developed through the following engineering work products:
 
 ## Work Products
 
