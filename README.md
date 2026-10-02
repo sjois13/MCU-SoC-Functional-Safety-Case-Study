@@ -48,23 +48,11 @@ The case study is developed through the following engineering work products:
 
 ## Current Development
 
-The next stage develops the functional and failure analysis of the architecture:
+The case study is developed iteratively. The current v0.1 establishes an initial end-to-end safety analysis using selected MCU/SoC functions; it is not yet a complete analysis of every IP.
 
-```text
-Architecture element
-        ↓
-Intended function
-        ↓
-Functional failure
-        ↓
-Local effect
-        ↓
-Failure propagation
-        ↓
-MCU boundary effect
-```
+This reflects the engineering process: later analysis can expose gaps in earlier work, and findings from safety mechanisms, DFA or verification may require the architecture, failure analysis or requirements to be refined.
 
-This analysis will provide the basis for deriving semiconductor-level safety requirements.
+After the initial baseline is complete, the analysis will be expanded across the remaining IPs and deepened at semiconductor level.
 
 ## Project Basis and Limitations
 
