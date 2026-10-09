@@ -30,7 +30,7 @@ The current tree represents functional failure paths only. Safety-mechanism fail
 | IE-004 | Control information corrupted during transfer | FF-INT-001.1 |
 | IE-005 | Incorrect output generation | TBD |
 
-The functional failures are defined in the [Functional Failure Analysis](../failure-analysis/functional_failure_analysis.md).
+The functional failures are defined in the [Functional Failure Analysis](../02-failure-analysis%20/functional_failure_analysis.md).
 
 ## 4. Findings
 
