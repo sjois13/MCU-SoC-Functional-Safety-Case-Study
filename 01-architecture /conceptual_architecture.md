@@ -8,7 +8,8 @@ This document establishes the initial architecture and failure-analysis basis fo
 
 The conceptual MCU/SoC is the primary controller of one humanoid Joint Control Unit (JCU).
 
-![System Boundary](./diagrams%20/system_boundary.png)
+<img width="1112" height="208" alt="image" src="https://github.com/user-attachments/assets/e65143d4-6995-4cdf-9faf-dfe240bad8a8" />
+
 
 *Figure 1 — System context and boundary of the conceptual MCU/SoC within the Joint Control Unit.*
 
