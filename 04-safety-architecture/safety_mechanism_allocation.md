@@ -4,7 +4,7 @@
 
 ## 1. Purpose
 
-This work product proposes an initial safety architecture for the conceptual MCU/SoC and allocates candidate safety mechanisms to the preliminary [Semiconductor Safety Requirements](../safety-requirements/semiconductor_safety_requirements.md).
+This work product proposes an initial safety architecture for the conceptual MCU/SoC and allocates candidate safety mechanisms to the preliminary [Semiconductor Safety Requirements](03-safety-requirements/semiconductor_safety_requirements.md)
 
 The reasoning follows:
 
