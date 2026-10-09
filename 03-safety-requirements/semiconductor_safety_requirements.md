@@ -4,7 +4,7 @@
 
 ## 1. Purpose
 
-This work product derives an initial set of MCU/SoC-level safety requirements from the functional failures and propagation paths identified in the [Functional Failure Analysis](../failure-analysis/functional_failure_analysis.md).
+This work product derives an initial set of MCU/SoC-level safety requirements from the functional failures and propagation paths identified in the [Functional Failure Analysis](../02-failure-analysis/functional_failure_analysis.md)
 
 The derivation follows:
 
