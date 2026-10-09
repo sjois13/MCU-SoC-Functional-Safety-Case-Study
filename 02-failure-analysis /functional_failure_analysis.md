@@ -4,7 +4,7 @@
 
 ## 1. Purpose
 
-This work product develops the initial functional failure analysis of the conceptual MCU/SoC defined in the [architecture baseline](../architecture/conceptual_architecture.md).
+This work product develops the initial functional failure analysis of the conceptual MCU/SoC defined in the [Architecture Baseline](01-architecture%20/conceptual_architecture.md)
 
 The analysis follows:
 
