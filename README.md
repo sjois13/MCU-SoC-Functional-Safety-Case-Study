@@ -38,7 +38,7 @@ Verification and traceability
 
 The case study is developed through the following engineering work products:
 
-1. [Conceptual MCU/SoC Architecture](01-architecture /conceptual_architecture.md)
+1. 1. [Conceptual MCU/SoC Architecture](01-architecture%20/conceptual_architecture.md)
 2. [Functional Failure Analysis](02-failure-analysis /functional_failure_analysis.md)
 3. [Semiconductor Safety Requirements](03-safety-requirements/semiconductor_safety_requirements.md)
 4. [Safety Architecture and Mechanism Allocation](04-safety-architecture/safety_mechanism_allocation.md)
