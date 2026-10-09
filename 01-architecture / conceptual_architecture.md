@@ -8,7 +8,7 @@ This document establishes the initial architecture and failure-analysis basis fo
 
 The conceptual MCU/SoC is the primary controller of one humanoid Joint Control Unit (JCU).
 
-![System boundary](01-architecture / diagrams /system_boundary.png)
+![System Boundary](diagrams/system_boundary.png)
 
 *Figure 1 — System context and boundary of the conceptual MCU/SoC within the Joint Control Unit.*
 
@@ -48,7 +48,7 @@ Control-law design is outside scope.
 | ARCH-PWR-001 | Power-related function | SoC supply/conditioning/distribution; boundary TBD |
 | ARCH-OUT-001 | Output peripheral | Interface toward external power stage |
 
-![Conceptual MCU/SoC architecture](diagrams/conceptual_soc_architecture.png)
+![Conceptual MCU/SoC Architecture](diagrams/conceptual_soc_architecture.png)
 
 *Figure 2 — Initial conceptual MCU/SoC architecture and principal information paths.*
 
