@@ -38,13 +38,13 @@ Verification and traceability
 
 The case study is developed through the following engineering work products:
 
-1. [Conceptual MCU/SoC Architecture](architecture/conceptual_architecture.md)
-2. [Functional Failure Analysis](failure-analysis/functional_failure_analysis.md)
-3. [Semiconductor Safety Requirements](safety-requirements/semiconductor_safety_requirements.md)
-4. [Safety Architecture and Mechanism Allocation](safety-architecture/safety_mechanism_allocation.md)
-5. [Qualitative Fault Tree Analysis](fta/fault_tree_analysis.md)
-6. [FMEDA Framework](fmeda/fmeda_framework.md)
-7. [Dependent Failure Analysis](dfa/dependent_failure_analysis.md)
+1. [Conceptual MCU/SoC Architecture](01-architecture/conceptual_architecture.md)
+2. [Functional Failure Analysis](02-failure-analysis/functional_failure_analysis.md)
+3. [Semiconductor Safety Requirements](03-safety-requirements/semiconductor_safety_requirements.md)
+4. [Safety Architecture and Mechanism Allocation](04-safety-architecture/safety_mechanism_allocation.md)
+5. [Qualitative Fault Tree Analysis](05-fta/fault_tree_analysis.md)
+6. [FMEDA Framework](06-fmeda/fmeda_framework.md)
+7. [Dependent Failure Analysis](07-dfa/dependent_failure_analysis.md)
 
 ## Current Development
 
