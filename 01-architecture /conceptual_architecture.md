@@ -48,7 +48,7 @@ Control-law design is outside scope.
 | ARCH-PWR-001 | Power-related function | SoC supply/conditioning/distribution; boundary TBD |
 | ARCH-OUT-001 | Output peripheral | Interface toward external power stage |
 
-![Conceptual MCU/SoC Architecture](diagrams%20/conceptual_soc_architecture.png)
+![Conceptual MCU/SoC Architecture](diagrams/conceptual_soc_architecture.png)
 
 *Figure 2 — Initial conceptual MCU/SoC architecture and principal information paths.*
 
