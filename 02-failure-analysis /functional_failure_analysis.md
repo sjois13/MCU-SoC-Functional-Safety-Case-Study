@@ -1,6 +1,7 @@
 # Functional Failure Analysis — Conceptual MCU/SoC
 
 **Version:** v0.2 — Working Draft 
+
 **Status:** Focused ADC analysis; other IPs retained as preliminary candidates
 
 ## 1. Purpose and Scope
