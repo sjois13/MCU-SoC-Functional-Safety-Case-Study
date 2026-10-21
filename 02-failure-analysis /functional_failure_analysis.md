@@ -1,283 +1,265 @@
-# Functional Failure Analysis
+# Functional Failure Analysis — Conceptual MCU/SoC
 
-**Version:** v0.1 — Work in Progress
+**Version:** v0.2 — Work in Progress  
+**Status:** Focused ADC analysis; other IPs retained as preliminary candidates
 
-## 1. Purpose
+## 1. Purpose and Scope
 
-This work product develops the initial functional failure analysis of the conceptual MCU/SoC defined in the [Architecture Baseline](../01-architecture%20/conceptual_architecture.md).
+This work product analyses how failures of selected MCU/SoC functions could propagate to externally observable MCU boundary behaviours. It builds on the [Conceptual MCU/SoC Architecture](../01-architecture%20/conceptual_architecture.md), particularly its ADC decomposition in Section 3.1.
 
-The analysis follows:
+The first detailed study covers the **ADC acquisition path** (`ARCH-ADC-001`). CPU, SRAM, interconnect, clock and reset remain at preliminary-analysis depth. This staged approach is deliberate: a sufficiently detailed analysis of one representative IP provides a reusable method and exposes architectural questions before extending the same method to other IPs.
 
-```text
-Architecture element
-        ↓
-Intended function
-        ↓
-Functional failure
-        ↓
-Local effect
-        ↓
-Propagation through SoC
-        ↓
-MCU boundary failure
-        ↓
-Safety relevance
-```
+This is a **functional failure analysis**, not a transistor-level failure-mode analysis, silicon FMEDA, completed FTA, or assertion that any particular commercial MCU implements these functions. No failure rates, diagnostic coverage, safety integrity classification or reaction times are assumed.
 
-The objective at this stage is qualitative failure reasoning, not quantitative FMEDA.
+## 2. Analysis Method and Boundary
 
-Only functions and failures for which a meaningful propagation argument has been developed are included. Absence of an element from the analysis does not imply that it is safety-irrelevant.
-
----
-
-## 2. Analysis Scope
-
-The first iteration focuses on:
-
-- ADC;
-- CPU;
-- SRAM;
-- interconnect; and
-- clock.
-
-Communication, timer, NVM, reset, power-related functions and the output peripheral remain to be analysed.
-
-The functional failures below describe incorrect behaviour of an IP/SoC function. They are not claims about transistor-, gate- or physical-layout-level failure mechanisms.
-
-### Relationship to the Architecture Baseline
-
-The architecture baseline identifies broad initial functional failure candidates (`FF-xxx`).
-
-This analysis retains those identifiers and refines a broad candidate into subordinate functional failures where additional distinction is required for propagation analysis.
-
-For example:
+For each selected failure, the analysis follows:
 
 ```text
-ARCH-INT-001
-Interconnect
-        ↓
-FF-INT-001
-Incorrect transaction transfer
-        ↓
-        ├── FF-INT-001.1  Data corruption
-        ├── FF-INT-001.2  Non-delivery
-        ├── FF-INT-001.3  Incorrect timing
-        ├── FF-INT-001.4  Wrong destination
-        ├── FF-INT-001.5  Unintended additional delivery
-        ├── FF-INT-001.6  Duplication
-        ├── FF-INT-001.7  Incorrect ordering
-        └── FF-INT-001.8  Wrong source association
+Intended IP function
+       ↓
+Functional deviation
+       ↓
+Local effect at the IP/interface
+       ↓
+Propagation conditions and dependencies
+       ↓
+Effect on MCU processing or command generation
+       ↓
+Potential MCU boundary failure behaviour
 ```
 
-This refinement allows failures with different propagation behaviour to be analysed separately while retaining traceability to the architecture baseline.
+**Terminology:**
 
----
+- **Functional failure:** Deviation from the intended behaviour of an architectural function, independent of its physical root cause.
+- **Local effect:** What becomes incorrect or unavailable at the affected function's interface.
+- **Propagation condition:** An additional condition needed for the local effect to influence another function or the MCU boundary; it must not be silently assumed.
+- **MCU boundary effect:** A potentially observable failure behaviour at the MCU interface toward the JCU or external power stage.
+- **Candidate cause:** A possible contributing hardware/configuration/dependency failure, not a proven root cause or quantified failure mode.
 
-## 3. Functional Failure Analysis
+The external sensor, analog signal quality, power stage and robot-level response are outside the MCU/SoC boundary. Their behaviour can influence propagation but is not attributed to internal ADC hardware without evidence.
 
-| ID | Element / Intended Function | Functional Failure | Local Effect | Example Propagation | MCU Boundary Effect |
-|---|---|---|---|---|---|
-| FF-ADC-001 | **ADC** — convert an analog feedback input into a digital representation | Incorrect digital conversion result | Digital value does not correctly represent the applied analog input | CPU receives apparently valid but incorrect feedback and may calculate an incorrect control action | FB-001 / FB-005 |
-| FF-CPU-001 | **CPU** — execute software and calculate the local control action | Incorrect computation | Calculated result differs from the expected result for otherwise correct input data and execution context | Incorrect calculated command propagates toward the output path | FB-001 |
-| FF-SRAM-001 | **SRAM** — retain working data required during execution | Incorrect stored working data | Subsequent use of the affected location provides incorrect working data | CPU may use corrupted state or control data during computation and calculate an incorrect command | FB-001 / FB-005 |
-| FF-INT-001 | **Interconnect** — transfer transactions between SoC elements | Incorrect transaction transfer | One or more required properties of the transaction transfer are violated | Refined by FF-INT-001.1 through FF-INT-001.8 below | FB-001 / FB-002 / FB-003 / FB-004 / FB-005 depending on affected transaction |
-| FF-INT-001.1 | **Interconnect** — preserve information during transfer | Transaction data is corrupted during transfer | Destination receives information different from that produced by the source | Incorrect information may be consumed by CPU, memory or peripheral depending on the affected path | FB-001 / FB-005; path dependent |
-| FF-INT-001.2 | **Interconnect** — deliver required transactions | Required transaction is not delivered | Intended destination does not receive the requested information or operation | Destination may retain stale information or fail to perform the requested operation | FB-003; additional effects depend on transaction |
-| FF-INT-001.3 | **Interconnect** — satisfy required transfer timing | Transaction is delivered outside required timing | Information or operation is presented at an unintended time | Receiving function may use stale information or perform an action too early or too late | FB-002 / FB-003 |
-| FF-INT-001.4 | **Interconnect** — route transaction to the intended destination | Transaction is delivered to an unintended destination instead of the intended destination | Intended destination misses the transaction and another element receives it | Required action may be absent while an unintended action may occur elsewhere | FB-003 / potentially FB-004 |
-| FF-INT-001.5 | **Interconnect** — restrict delivery to the intended destination(s) | Transaction is additionally delivered to an unintended destination | Intended destination may operate correctly while another element also receives an unintended transaction | Unintended receiving element may perform an unintended operation | Potentially FB-004; path dependent |
-| FF-INT-001.6 | **Interconnect** — preserve required transaction occurrence | Transaction is duplicated | Destination observes the same transaction more times than intended | A repeated write, command or peripheral action may occur depending on transaction semantics | TBD; potentially FB-004 |
-| FF-INT-001.7 | **Interconnect** — preserve required transaction ordering | Required transaction ordering is violated | Destination observes otherwise valid transactions in an unintended sequence | Dependent operations may execute in the wrong sequence and produce an incorrect downstream state | TBD |
-| FF-INT-001.8 | **Interconnect** — preserve intended source association | Transaction/information is associated with an unintended source | Destination acts on information as though it originated from another source | Downstream behaviour depends on how source identity affects interpretation or access | TBD |
-| FF-CLK-001 | **Clock** — provide the timing reference required by dependent functions | Incorrect clock behaviour | Timing behaviour of functions using the affected clock is altered | Computation, acquisition or output activity may occur at an incorrect time | FB-002; additional effects TBD |
+### 2.1 MCU boundary failure behaviour reference
 
----
-
-## 4. Failure Attribution
-
-Failure attribution matters because the same incorrect information observed by an IP can originate from different parts of the SoC.
-
-For example:
-
-```text
-Correct data stored in SRAM
-        ↓
-SRAM provides the correct data
-        ↓
-Data is corrupted during transfer
-        ↓
-CPU receives incorrect data
-```
-
-In this case, the incorrect value observed at the CPU does not by itself establish an SRAM storage failure.
-
-At the current abstraction level, if the SRAM provided the correct information and that information changed during transfer, the originating functional failure is associated with the transfer path.
-
-Conversely:
-
-```text
-Data stored incorrectly in SRAM
-        ↓
-SRAM provides the corrupted stored value
-        ↓
-Interconnect transfers that value correctly
-        ↓
-CPU receives incorrect data
-```
-
-Here the interconnect has performed its transfer function correctly. The originating functional failure is associated with storage.
-
-This distinction is important because different originating failures may require different safety mechanisms.
-
-It also prevents a downstream symptom from being incorrectly treated as evidence that the receiving or transmitting IP itself caused the failure.
-
----
-
-## 5. Interconnect Functional Properties
-
-The interconnect analysis identified several properties that may need to be preserved for a transaction to be considered correct.
-
-| Required property | Candidate functional failure |
+| ID | Behaviour |
 |---|---|
-| Information integrity | Data corruption |
-| Required delivery | Transaction loss / non-delivery |
-| Intended destination | Wrong-destination delivery |
-| Delivery only to intended destination(s) | Unintended additional delivery |
-| Required occurrence | Missing, duplicated or unintended transaction |
-| Required timing | Early or late delivery |
-| Required ordering | Incorrect transaction sequence |
-| Intended source association | Information associated with an unintended source |
+| FB-001 | Incorrect control output value |
+| FB-002 | Control output at incorrect time |
+| FB-003 | Expected control output missing or stale |
+| FB-004 | Unintended/spurious control output |
+| FB-005 | Incorrect response to otherwise correct input/feedback |
 
-These are conceptual functional properties.
+These project-specific behaviours are not necessarily mutually exclusive. In particular, `FB-005` describes an input-to-response relationship and may overlap with `FB-001` or `FB-002`.
 
-The exact guarantees, timing constraints, ordering rules and source/destination semantics depend on the eventual interconnect architecture and are currently TBD.
+## 3. ADC Intended Function and Analysis Assumptions
 
-Not every transaction necessarily requires the same ordering or timing behaviour. These requirements must therefore be defined from the specific transaction and architecture rather than assumed globally.
-
----
-
-## 6. Initial Failure Propagation Observations
-
-The analysis shows that an externally similar MCU failure can originate from different internal functions.
-
-### Example A — ADC-originated failure
+The ADC acquisition path is expected to make a digital representation of the **intended analog input** available to its consumer, with sufficient validity and timeliness for the application. Exact accuracy, update timing and freshness limits are TBD.
 
 ```text
-Incorrect ADC conversion
+External analog feedback
         ↓
-Incorrect digital representation of feedback
+Analog input / channel selection
         ↓
-CPU uses incorrect feedback
+Sampling and conversion  ←  reference / clock / trigger
         ↓
-Incorrect calculated control action
+Result and status interface
         ↓
-FB-001
-Incorrect control output value
+SoC interconnect
+        ↓
+CPU / feedback processing
+        ↓
+Local control computation
+        ↓
+MCU output peripheral → external power stage
 ```
 
-### Example B — CPU-originated failure
+**Working assumptions for conditional propagation only:**
+
+- **FA-ASM-001:** At least one ADC result is used in local control or state estimation (consistent with `ASM-004` in WP01).
+- **FA-ASM-002:** A consumer may use an ADC value unless it rejects or qualifies that value; actual consumer behaviour is TBD.
+- **FA-ASM-003:** No ADC-specific diagnostic or fault reaction is credited in this analysis. This does **not** assert that a real implementation lacks diagnostics.
+- **FA-ASM-004:** A plausible-looking incorrect value may not be distinguishable from a valid value without additional information; the presence and effectiveness of such information are TBD.
+
+A functional failure in the acquisition path does not automatically produce an incorrect MCU output. Propagation depends on data usage, control sensitivity, software behaviour, timing and any protection or fallback behaviour.
+
+## 4. ADC Functional Failure Catalogue
+
+`FF-ADC-001` is the parent topic **incorrect or invalid ADC acquisition information**. The suffixes below identify distinct deviations for analysis; they are not separate physical fault classifications.
+
+| ID | Functional deviation | Local effect at ADC interface | Illustrative candidate contributors (not exhaustive) |
+|---|---|---|---|
+| FF-ADC-001A | Incorrect conversion value | Result differs from the intended analog quantity beyond a yet-to-be-defined tolerance | Conversion circuitry, reference deviation, sampling disturbance |
+| FF-ADC-001B | Wrong input channel acquired | Result corresponds to a different analog input | Channel-selection logic, configuration corruption, sequencing |
+| FF-ADC-001C | Result stale or repeated | Previously acquired value presented as if current | Trigger/sequence failure, result-update failure, status handling |
+| FF-ADC-001D | Conversion absent or incomplete | No usable new result when expected | Conversion control, clock, trigger, supply/reset dependency |
+| FF-ADC-001E | Conversion/result available at incorrect time | Sample age or delivery time violates the intended schedule | Trigger timing, clock deviation, conversion sequencing |
+| FF-ADC-001F | Result/status inconsistency | Data and validity/completion indication do not describe the same conversion | Result/status interface, synchronization, buffering |
+
+**Attribution boundary:** Corruption after the ADC result has correctly left its defined interface may belong to `FF-INT-001` rather than `FF-ADC-001`. The exact interface boundary requires refinement when the bus/register architecture is defined. Likewise, an erroneous external sensor voltage is an input-path/system-interface concern, not automatically an internal ADC failure.
+
+## 5. Selected ADC Failure Propagation Analyses
+
+### 5.1 FF-ADC-001A — Incorrect but plausible conversion result
+
+**Intended behaviour:** The result represents the sampled analog input within defined accuracy limits (limits TBD).
+
+**Functional deviation:** The ADC reports a numerically plausible but inaccurate value.
+
+**Local effect:** The result register/interface exposes incorrect feedback data without necessarily indicating an error.
+
+**Conditional propagation:**
 
 ```text
-Correct input / feedback information
-        ↓
-Incorrect CPU computation
-        ↓
-Incorrect calculated control action
-        ↓
-FB-001
-Incorrect control output value
+Incorrect but plausible ADC result
+               ↓
+Consumer accepts result as valid
+               ↓
+Incorrect feedback / estimated joint state
+               ↓
+Control computation uses affected feedback
+               ↓
+Potential incorrect output command (FB-001 / FB-005)
 ```
 
-### Example C — Interconnect-originated failure
+**Conditions that must hold:** The affected signal is used in the relevant computation; its error is not rejected or compensated; and the computation is sensitive enough to change the resulting command. Whether these conditions hold is TBD.
+
+**Important limitation:** A simple range check may accept an incorrect value that lies within the permitted range. This observation motivates later diagnostic analysis but does not select a mechanism here.
+
+**Open questions:** What is the feedback quantity? What error magnitude matters? Is an independent reference or other feedback available? How does software qualify the value?
+
+### 5.2 FF-ADC-001B — Wrong channel acquired
+
+**Intended behaviour:** The requested conversion corresponds to the configured channel and intended physical signal.
+
+**Functional deviation:** A result from another channel is delivered or labelled as the intended channel.
+
+**Local effect:** The numerical result may be internally consistent but semantically associated with the wrong signal.
+
+**Conditional propagation:** If the consumer cannot distinguish the channel mismatch and uses the value for the wrong feedback variable, the MCU may calculate an incorrect command (`FB-001` / `FB-005`). If the consumer detects the mismatch or ignores the result, boundary propagation may be prevented.
+
+**Important distinction:** This is not equivalent to a bit error in the converted value. A data-integrity check over a correctly transmitted wrong-channel result would not, by itself, establish correct channel identity.
+
+**Open questions:** How is channel identity represented? Are conversions multiplexed? Is the sequence controlled by software or hardware? What configuration dependencies are shared?
+
+### 5.3 FF-ADC-001C — Stale or repeated result
+
+**Intended behaviour:** A newly required sample is distinguishable from an earlier sample and available within the application's freshness requirement (TBD).
+
+**Functional deviation:** The result remains unchanged because a new acquisition or result update did not occur, or an earlier value is reused.
+
+**Local effect:** The consumer can observe a plausible value that no longer represents the current physical state.
+
+**Conditional propagation:**
 
 ```text
-Correct information produced by source
-        ↓
-Information corrupted during transfer
-        ↓
-Incorrect information received by destination
-        ↓
-Incorrect downstream behaviour
-        ↓
-FB-001 / FB-005
-depending on the affected path
+New acquisition/result update does not occur
+                 ↓
+Previous result remains accessible
+                 ↓
+Consumer treats previous result as fresh
+                 ↓
+Control uses outdated feedback
+                 ↓
+Potential FB-001 / FB-005
 ```
 
-These examples demonstrate that the MCU boundary failure behaviour alone is not sufficient to identify the originating internal functional failure.
+If the stale data causes the MCU to omit or delay an expected command, `FB-002` or `FB-003` may also be relevant; that path is not established by the ADC fault alone.
 
-For example, observing `FB-001` does not by itself establish whether the originating failure occurred in the ADC, CPU, SRAM, interconnect, output path or another element.
+**Important distinction:** An unchanged physical signal can legitimately yield repeated ADC codes. Equal successive values do not prove stale acquisition.
 
-The internal failure source and propagation path therefore matter when later deriving safety requirements and allocating safety mechanisms.
+**Open questions:** What marks a new conversion? Is there a timestamp, sequence counter, completion flag or other freshness evidence? What happens if a new sample is late?
 
----
+### 5.4 FF-ADC-001D/E — Missing or mistimed conversion
 
-## 7. Shared Dependencies
+**Intended behaviour:** Acquisition occurs in the intended control-cycle relationship, and results become available when required.
 
-Some architecture elements may influence multiple functions or IP blocks.
+**Functional deviation:** The conversion does not complete, or the sampling/delivery timing deviates from the intended schedule.
 
-Initial candidates include:
+**Local effect:** A new result is missing, late, or associated with an unintended sampling instant.
 
-- clock generation and distribution;
-- reset generation and distribution;
-- power supply, management or distribution; and
-- interconnect resources shared by multiple IP elements.
+**Conditional propagation:** Consumer behaviour determines whether the MCU reuses old feedback, waits for data, proceeds with a substitute value, or changes output timing. Potential effects include `FB-001`, `FB-002`, `FB-003` and `FB-005`; none is automatic.
 
-At this stage these are treated only as **candidates for later dependent failure analysis**.
+**Open questions:** Which trigger and clock domains are involved? What is the control-cycle deadline? Does a missing completion indication cause a timeout, blocking wait or fallback?
 
-No claim is made that a dependent failure exists merely because a resource is shared.
+### 5.5 FF-ADC-001F — Result/status inconsistency
 
-Similarly, independence between duplicated or redundant functions cannot be assumed solely because more than one implementation exists. Shared resources and common dependencies must be considered when independence is later claimed.
+**Intended behaviour:** Completion/validity status accurately describes the result that the consumer reads.
 
----
+**Functional deviation:** Status indicates a new or valid conversion while the associated data belongs to a different conversion or is not yet valid.
 
-## 8. Open Analysis
+**Local effect:** The consumer may accept mismatched data and status.
 
-The following remain open:
+**Conditional propagation:** A consumer relying on the incorrect status could use invalid or stale feedback and influence the command (`FB-001` / `FB-005`). A software protocol that establishes consistent data/status association could interrupt this path, but its existence and effectiveness are TBD.
 
-- communication peripheral functional failures;
-- timer/capture functional failures;
-- program NVM functional failures;
-- reset functional failures;
-- power-related functional failures;
-- output peripheral functional failures;
-- additional ADC failure behaviours;
-- additional CPU and SRAM failure behaviours;
-- more precise transaction timing requirements;
-- transaction-specific ordering requirements;
-- propagation through specific SoC paths;
-- safe-state and fault-reaction behaviour;
-- fault detection and handling requirements;
-- physical semiconductor failure mechanisms; and
-- quantitative failure data.
+**Open questions:** Are data/status reads atomic or otherwise synchronized? Can buffering or interrupt sequencing create ambiguity? What is the hardware/software responsibility split?
 
-The current analysis is therefore not a complete FMEA or FMEDA.
+## 6. ADC Dependency and Common-Effect Considerations
 
-No diagnostic coverage, failure rates, SPFM or LFM values are assigned in this work product.
+These are **questions for architectural refinement and DFA**, not claims of implemented redundancy or independent channels.
 
----
+| Shared or external dependency | Potential influence on acquisition | Analysis implication |
+|---|---|---|
+| Voltage reference | Systematic conversion bias across one or multiple channels | Two agreeing results need not both be correct |
+| Analog supply / ground | Conversion accuracy or availability | Check whether acquisition and proposed monitoring share a disturbance |
+| Conversion clock / trigger | Missing, shifted or mistimed samples | Data value checks alone may miss temporal invalidity |
+| Channel configuration / sequencing | Wrong-channel or wrong-order results | Correct numerical transmission does not prove correct source identity |
+| Reset / initialization | Invalid setup or unexpected acquisition state | Determine what consumer assumes after reset |
+| SoC interconnect | Corrupted, delayed, misrouted or lost result/status transfer | Separate ADC-local failures from transfer-path failures |
+| CPU / consumer software | Incorrect interpretation, validation or use of results | Distinguish an ADC-originating failure from downstream failure |
 
-## 9. Next Step
+A common reference failure is particularly important: multiple conversion paths can produce mutually consistent but incorrect results if they share the same affected reference. Whether this scenario is applicable depends on the future reference and channel architecture.
 
-The next analysis step is to determine which functional failures can contribute to the assumed upstream safety concern and what behaviour is required from the MCU/SoC to prevent, detect or control their propagation.
+## 7. Preliminary Traceability to MCU Boundary
 
-The resulting requirements will form the initial set of semiconductor-level safety requirements.
+| Functional failure | Local effect | Conditional propagation | Candidate boundary behaviour |
+|---|---|---|---|
+| FF-ADC-001A | Inaccurate digital result | Consumer accepts and uses incorrect feedback | FB-001 / FB-005 |
+| FF-ADC-001B | Wrong signal represented | Channel mismatch not identified before use | FB-001 / FB-005 |
+| FF-ADC-001C | Previous result reused | Staleness not identified; feedback affects control | FB-001 / FB-005; FB-002 / FB-003 only conditionally |
+| FF-ADC-001D | New result unavailable | Consumer waits, reuses data or otherwise changes behaviour | FB-001 / FB-002 / FB-003 / FB-005, depending on consumer |
+| FF-ADC-001E | Incorrect sample/delivery time | Timing deviation affects feedback interpretation or command timing | FB-001 / FB-002 / FB-005 |
+| FF-ADC-001F | Inconsistent result and status | Consumer accepts mismatched data/status | FB-001 / FB-005 |
 
-Safety mechanisms will be selected only after those requirements are established.
+This table maps **possible propagation**, not demonstrated end-to-end causality. It does not imply that all listed effects occur in a given design.
 
-The intended progression is:
+## 8. Other IP/SoC Functional Failure Candidates — Current Coverage
 
-```text
-Functional failure
-        ↓
-Failure propagation
-        ↓
-MCU boundary failure
-        ↓
-Safety relevance
-        ↓
-Semiconductor safety requirement
-        ↓
-Safety mechanism allocation
-        ↓
-Verification
-```
+The following topics are retained from the architecture baseline but are **not** analysed at the same depth as ADC in this revision.
+
+| ID | Element | Candidate functional failure | Current next question |
+|---|---|---|---|
+| FF-CPU-001 | CPU | Incorrect computation | What execution/result path can corrupt the command, and what faults are distinguishable? |
+| FF-SRAM-001 | SRAM | Incorrect stored working data | Which data is affected, and where is corruption introduced versus transferred? |
+| FF-INT-001 | Interconnect | Incorrect transaction transfer | Which data, address, control and timing deviations affect which consumers? |
+| FF-CLK-001 | Clock | Incorrect clock behaviour | Which domains and dependent functions are affected? |
+| FF-RST-001 | Reset | Intended defined state not established | Which blocks or registers may remain incorrectly initialized? |
+
+Communication, timer, program NVM, power-related and output-peripheral failure candidates remain to be developed. This is a **selected-IP study**, not an exhaustive SoC failure catalogue.
+
+## 9. Inputs to Safety Requirements and Mechanism Analysis
+
+The ADC analysis suggests several **requirement topics**, not finalized requirements:
+
+- Accuracy/validity of safety-relevant acquisition data at the defined consumer interface
+- Correct association between result, input channel and acquisition instance
+- Detection or handling of missing, stale or late acquisition information
+- Defined treatment of invalid data and status at the consumer boundary
+- Defined fault indication and reaction responsibilities between ADC, CPU/software, MCU output and external JCU
+- Shared-reference, clock, power and interconnect dependencies that may limit proposed diagnostics
+
+The [Semiconductor Safety Requirements](../03-safety-requirements/semiconductor_safety_requirements.md) must be refined only after the application-relevant validity limits, timing assumptions and fault-response responsibilities are specified. Candidate mechanisms belong in the [Safety Architecture and Mechanism Allocation](../04-safety-architecture/safety_mechanism_allocation.md); none is credited here.
+
+## 10. Open Items and Next Iteration
+
+| Open item | Why it matters | Intended follow-up |
+|---|---|---|
+| ADC signal identity and permissible error | Determines what constitutes an incorrect result | WP01 / WP03 |
+| Sampling schedule and freshness criteria | Distinguishes valid repeated values from stale data | WP01 / WP03 |
+| Channel sequencing and result/status protocol | Defines wrong-channel and mismatch propagation | WP01 / WP02 |
+| Reference, clock, power and reset architecture | Establishes shared dependencies and common effects | WP01 / DFA |
+| Consumer acceptance, timeout and fallback behaviour | Determines whether a local failure reaches the MCU boundary | WP02 / WP03 / WP04 |
+| MCU-to-power-stage interface and safe reaction | Defines responsibility for preventing or limiting an unsafe command | WP01 / WP03 / WP04 |
+| Fault injection points and observable outcomes | Enables a meaningful verification strategy | Verification planning |
+| ADC physical failure-mode and failure-rate data | Required before credible quantitative FMEDA | FMEDA, when justified data exists |
+
+**Next focused step:** Review `FF-ADC-001A` and `FF-ADC-001C` against the intended JCU feedback usage, then derive a small set of measurable, interface-specific ADC safety requirements. Iterate back to WP01 if the analysis exposes missing architecture. Later, apply the same decomposition-to-propagation method to CPU, SRAM and interconnect.
