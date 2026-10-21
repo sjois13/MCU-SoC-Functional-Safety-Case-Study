@@ -1,6 +1,6 @@
 # Conceptual MCU/SoC Architecture
 
-**Version:** v0.2 — Work in Progress  
+**Version:** v0.2 — Working Draft   
 **Status:** Conceptual architecture baseline; selected ADC decomposition added
 
 This document establishes the initial architecture and failure-analysis basis for a conceptual safety-related MCU/SoC. The ADC acquisition subsystem is decomposed in greater detail as the first selected IP study. Anything not defined is **TBD**; no quantitative values are assumed without a stated basis.
