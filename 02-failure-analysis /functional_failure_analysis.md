@@ -2,7 +2,7 @@
 
 **Version:** v0.2 — Working Draft 
 
-**Status:** Focused ADC analysis; other IPs retained as preliminary candidates
+**Status:** Focused ADC analysis. The other IPs retained as preliminary candidates
 
 ## 1. Purpose and Scope
 
